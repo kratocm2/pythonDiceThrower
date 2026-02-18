@@ -40,9 +40,12 @@ class HistoryPanel(QWidget):
         # Load history from file on startup
         self.load_history()
 
-    def add_roll(self, formula_str: str, total: int, rolls_with_modifier: str):
+    def add_roll(self, name: str, total: int, rolls_with_modifier: str):
         """Add a roll to history and save."""
-        entry = f"{formula_str} = {total} ({rolls_with_modifier})"
+        if not name:
+            name = "untitled"
+
+        entry = f"{name} = {total} ({rolls_with_modifier})"
         self.history.insertItem(0, entry)
         self.save_history()
 

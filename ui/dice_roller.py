@@ -3,14 +3,12 @@ import os
 
 from PySide6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout,
-    QLineEdit, QLabel, QPushButton, QMessageBox
+    QLineEdit, QLabel, QPushButton
 )
 from PySide6.QtGui import QIntValidator
-from PySide6.QtCore import Signal, QEvent
+from PySide6.QtCore import Signal
 
 from logic.dice import roll_dice, calculate_total
-
-PREMADE_FILE = "premade.json"
 
 
 class DiceRow(QWidget):
@@ -103,7 +101,8 @@ class DiceRollerPanel(QWidget):
     # --------------------------
     # Rolling logic
     # --------------------------
-    def roll(self):
+    def roll(self, name: str = "untitled"):
+        """Roll all dice rows and send to history with optional name"""
         total_rolls = []
         formula_parts = []
         total_modifiers = 0
@@ -133,11 +132,14 @@ class DiceRollerPanel(QWidget):
 
         formula_str = " + ".join(formula_parts)
 
+        # Posíláme do historie: název, celkový výsledek, detail
         self.history_callback(
-            formula_str,
+            name,
             grand_total,
             f"{rolls_text} + {total_modifiers}"
         )
+
+        return formula_str
 
     # --------------------------
     # Get / Load configuration

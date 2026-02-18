@@ -19,14 +19,14 @@ class PremadePanel(QWidget):
 
         layout = QVBoxLayout()
 
-        # 🔥 Tlačítko pro uložení premade přímo zde
+        # Tlačítko pro uložení premade přímo zde
         self.save_premade_button = QPushButton("Save as Premade")
         self.save_premade_button.clicked.connect(self.save_as_premade)
 
         self.premade_list = QListWidget()
         self.delete_button = QPushButton("Delete Selected")
 
-        layout.addWidget(self.save_premade_button)  # nad seznamem
+        layout.addWidget(self.save_premade_button)
         layout.addWidget(self.premade_list)
         layout.addWidget(self.delete_button)
 
@@ -42,6 +42,7 @@ class PremadePanel(QWidget):
     # Load & use premade
     # --------------------------
     def load_premades(self):
+        """Načte premade a zobrazí v seznamu s formulí"""
         self.premade_list.clear()
 
         if not os.path.exists(PREMADE_FILE):
@@ -51,10 +52,16 @@ class PremadePanel(QWidget):
             data = json.load(file)
 
         for item in data:
-            self.premade_list.addItem(item["name"])
+            # Spočítáme formuli: 8d6+0
+            formula_parts = []
+            for row in item["rows"]:
+                mod_text = f"+{row['mod']}" if row['mod'] >= 0 else f"{row['mod']}"
+                formula_parts.append(f"{row['count']}d{row['sides']}{mod_text}")
+            formula_str = " + ".join(formula_parts)
+            self.premade_list.addItem(f"{item['name']} ({formula_str})")
 
     def use_premade(self):
-        """Použije vybraný premade hod v DiceRollerPanel"""
+        """Použije vybraný premade hod v DiceRollerPanel a uloží do historie"""
         row = self.premade_list.currentRow()
         if row < 0:
             return
@@ -65,8 +72,8 @@ class PremadePanel(QWidget):
         # Naplnění dice řádků do DiceRoller
         self.dice_roller.load_configuration(data[row]["rows"])
 
-        # 🔥 volitelně rovnou přepočítat roll
-        self.dice_roller.roll()
+        # Roll s názvem hodu pro historii
+        self.dice_roller.roll(name=data[row]["name"])
 
     def delete_premade(self):
         row = self.premade_list.currentRow()
