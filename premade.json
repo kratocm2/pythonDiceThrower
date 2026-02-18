@@ -1,0 +1,12 @@
+[
+    {
+        "name": "fireball",
+        "rows": [
+            {
+                "count": 8,
+                "sides": 6,
+                "mod": 0
+            }
+        ]
+    }
+]
