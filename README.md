@@ -3,3 +3,5 @@ Python project that includes:
 - preseting dice rolls
 - rolls history
 - all with UI
+
+[**Back to portfolio**](https://github.com/kratocm2/portfolio)
